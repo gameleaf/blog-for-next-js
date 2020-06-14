@@ -1,0 +1,13 @@
+{
+    "name": "blog-for-next-js",
+    "version": "1.0.0",
+    "description": "Make markdown files accessible to Next.js pages.",
+    "main": "index.ts",
+    "types": "index.d.ts",
+    "author": "Ron B. Yeh",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git@gitlab.com:gameleaflib/blog-for-next-js.git"
+    }
+}
