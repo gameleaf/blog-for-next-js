@@ -1,3 +1,7 @@
+.gitignore
 tsconfig.json
 README.md
-.gitignore
+scripts
+*.ts
+
+!*.d.ts
