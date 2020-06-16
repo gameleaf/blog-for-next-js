@@ -1,7 +1,11 @@
 .gitignore
+.vscode
 tsconfig.json
 README.md
 scripts
+*.tgz
 *.ts
+yarn.lock
+tests
 
 !*.d.ts

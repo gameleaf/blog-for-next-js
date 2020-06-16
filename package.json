@@ -6,8 +6,12 @@
     "types": "index.d.ts",
     "author": "Ron B. Yeh",
     "license": "MIT",
+    "devDependencies": {
+        "@types/node": "latest",
+        "jest": "latest"
+    },
     "repository": {
         "type": "git",
-        "url": "git@gitlab.com:gameleaflib/blog-for-next-js.git"
+        "url": "https://github.com/gameleaf/blog-for-next-js"
     }
 }

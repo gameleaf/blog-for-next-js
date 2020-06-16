@@ -1,0 +1,9 @@
+{
+    "files.exclude": {
+        "node_modules/*": true,
+        "*.js.map": true,
+        "*.js": true,
+        "*.d.ts": true,
+        "*.tgz": true
+    }
+}
