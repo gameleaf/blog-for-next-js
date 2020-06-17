@@ -101,16 +101,33 @@ class BlogPosts {
         }
     }
 
+    // Returns the slugs in the format that Next.js expects.
     getStaticPaths() {
         const paths = [];
         for (const slug in this.slugToAbsolutePath) {
             const pathToAdd: { params: any } = { params: {} };
             pathToAdd.params[this.config.pageParamName] = slug.split("/");
             paths.push(pathToAdd);
-            console.log(pathToAdd);
         }
         return paths;
     }
+
+    getSlugs() {
+        const slugs = [];
+        for (const slug in this.slugToAbsolutePath) {
+            slugs.push(slug);
+        }
+        return slugs;
+    }
+
+    getPostDataForSlug(slug:string | string[]) {
+        if (typeof slug !== "string") {
+            slug = slug.join("/"); // Turn the string[] into a string delimited by slashes
+        }
+        console.log("Slug " + slug);
+        return fs.readFileSync(this.slugToAbsolutePath[slug], "utf8")
+    }
+
 }
 
 export { BlogPostsConfig };
