@@ -2,7 +2,7 @@
     "files.exclude": {
         "node_modules/*": true,
         "*.js.map": true,
-        "*.js": true,
+        "*.js": false,
         "*.d.ts": true,
         "*.tgz": true
     }

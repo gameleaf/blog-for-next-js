@@ -1,4 +1,5 @@
 import fs from "fs";
+import matter from "gray-matter";
 import path from "path";
 
 type BlogPostsConfig = {
@@ -68,20 +69,20 @@ class BlogPosts {
                 // FILE
                 if (hasPatternToReject && this.config.patternToReject!.test(currItemRelativePath)) {
                     // REJECTED due to patternToReject.
-                    console.log("Rejected: " + currItemRelativePath);
+                    // console.log("Rejected: " + currItemRelativePath);
                 } else if (patternToAccept.test(currItemRelativePath)) {
                     // MATCHES patternToAccept.
                     const slug = currItemRelativePath.replace(patternToAccept, "");
                     this.slugToAbsolutePath[slug] = currItemAbsolutePath;
-                    console.log("Matched: " + currItemRelativePath);
+                    // console.log("Matched: " + currItemRelativePath);
                 } else {
                     // DOES NOT MATCH patternToAccept.
-                    console.log("Ignored: " + currItemRelativePath);
+                    // console.log("Ignored: " + currItemRelativePath);
                 }
             }
         }
 
-        console.log(this.slugToAbsolutePath);
+        // console.log(this.slugToAbsolutePath);
     }
 
     // Override our defaults with the user's supplied options.
@@ -120,14 +121,19 @@ class BlogPosts {
         return slugs;
     }
 
-    getPostDataForSlug(slug:string | string[]) {
+    // gray-matter is required.
+    getPostDataForSlug(slug: string | string[]) {
         if (typeof slug !== "string") {
             slug = slug.join("/"); // Turn the string[] into a string delimited by slashes
         }
-        console.log("Slug " + slug);
-        return fs.readFileSync(this.slugToAbsolutePath[slug], "utf8")
-    }
+        const fileString = fs.readFileSync(this.slugToAbsolutePath[slug], "utf8");
+        let grayMatterResult = matter(fileString, { excerpt: true });
 
+        // TODO: Check if there's an excerpt first!
+        let indexOfSeparator = grayMatterResult.content.indexOf("---");
+        let body = grayMatterResult.content.substring(indexOfSeparator + 3).trim();
+        return { ...grayMatterResult, body };
+    }
 }
 
 export { BlogPostsConfig };
