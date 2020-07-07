@@ -7,17 +7,22 @@ type BlogPostsConfig = {
     patternToAccept?: RegExp;
     patternToReject?: RegExp;
     pageParamName?: string;
+    excerptSeparator?: string;
 };
 
 const DEFAULT_POSTS_DIR: string = "posts";
 const DEFAULT_PAGE_PARAM_NAME: string = "slug";
 const DEFAULT_PATTERN_TO_ACCEPT: RegExp = /\.md$/;
+const DEFAULT_EXCERPT_SEPARATOR: string = "---";
 
+// Use this internal one to make the type checking easier.
+// If we use the external type, we will have to check whether each property exists or not.
 type BlogPostsConfigInternal = {
     postsRoot: string;
     patternToAccept: RegExp;
     patternToReject: RegExp | undefined;
     pageParamName: string;
+    excerptSeparator: string;
 };
 
 class BlogPosts {
@@ -26,6 +31,7 @@ class BlogPosts {
         patternToAccept: DEFAULT_PATTERN_TO_ACCEPT,
         patternToReject: undefined,
         pageParamName: DEFAULT_PAGE_PARAM_NAME,
+        excerptSeparator: DEFAULT_EXCERPT_SEPARATOR,
     };
 
     postsRootAbsolutePath: string = "";
@@ -100,6 +106,9 @@ class BlogPosts {
         if (typeof userConfig.pageParamName !== "undefined") {
             this.config.pageParamName = userConfig.pageParamName;
         }
+        if (typeof userConfig.excerptSeparator !== "undefined") {
+            this.config.excerptSeparator = userConfig.excerptSeparator;
+        }
     }
 
     // Returns the slugs in the format that Next.js expects.
@@ -127,11 +136,20 @@ class BlogPosts {
             slug = slug.join("/"); // Turn the string[] into a string delimited by slashes
         }
         const fileString = fs.readFileSync(this.slugToAbsolutePath[slug], "utf8");
-        let grayMatterResult = matter(fileString, { excerpt: true });
+        const grayMatterResult = matter(fileString, {
+            excerpt: true,
+            excerpt_separator: this.config.excerptSeparator,
+        });
 
-        // TODO: Check if there's an excerpt first!
-        let indexOfSeparator = grayMatterResult.content.indexOf("---");
-        let body = grayMatterResult.content.substring(indexOfSeparator + 3).trim();
+        const indexOfSeparator = grayMatterResult.content.indexOf(this.config.excerptSeparator);
+        let body = "";
+        if (indexOfSeparator >= 0) {
+            // We found an excerpt.
+            body = grayMatterResult.content.substring(indexOfSeparator + this.config.excerptSeparator.length).trim();
+        } else {
+            // No excerpt here!
+            body = grayMatterResult.content.trim();
+        }
         return { ...grayMatterResult, body };
     }
 }
